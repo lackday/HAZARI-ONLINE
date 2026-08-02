@@ -185,28 +185,26 @@ function renderScoreboard(state) {
 }
 
 // ---- টেবিলে প্রতিপক্ষদের আসন সাজিয়ে দেখানো (আমি সবসময় নিচে) ----
-function seatInitial(p) {
-  if (p.isBot) return '🤖';
-  return (p.name || '?').trim().slice(0, 1).toUpperCase();
-}
 
 function renderOppSeats(state) {
   const area = document.getElementById('oppSeats');
   if (!area) return;
   const mySeat = state.players.findIndex((p) => p && p.id === myPlayerId);
-  const order = [1, 2, 3].map((off) => state.players[(mySeat + off + 4) % 4]);
+  const order = [1, 2, 3].map((off) => (mySeat + off + 4) % 4);
 
   area.innerHTML = order
-    .map((p) => {
+    .map((seat) => {
+      const p = state.players[seat];
+      const avatarImg = `/avatars/avatar${seat + 1}.png`;
       if (!p) {
-        return `<div class="opp-seat empty"><div class="opp-avatar">?</div><div class="opp-name">খালি আসন</div></div>`;
+        return `<div class="opp-seat empty"><div class="opp-avatar"><img src="${avatarImg}" alt="" /></div><div class="opp-name">খালি আসন</div></div>`;
       }
       const statusHTML = p.ready
         ? `<span class="opp-status ready">✅ প্রস্তুত</span>`
         : `<span class="opp-status waiting">⏳ সাজাচ্ছে...</span>`;
       const fan = '<div class="card back"></div>'.repeat(4);
       return `<div class="opp-seat ${p.isBot ? 'bot' : ''}">
-        <div class="opp-avatar">${seatInitial(p)}</div>
+        <div class="opp-avatar"><img src="${avatarImg}" alt="" />${p.isBot ? '<span class="bot-badge">🤖</span>' : ''}</div>
         <div class="opp-name">${escapeHTML(p.name)}${!p.connected ? ' 📴' : ''}</div>
         ${statusHTML}
         <div class="opp-fan">${fan}</div>
@@ -217,6 +215,8 @@ function renderOppSeats(state) {
   const me = state.players.find((p) => p && p.id === myPlayerId);
   const chip = document.getElementById('myScoreChip');
   if (chip && me) chip.textContent = `স্কোর: ${me.score}`;
+  const myAvatar = document.getElementById('myAvatarImg');
+  if (myAvatar && mySeat !== -1) myAvatar.src = `/avatars/avatar${mySeat + 1}.png`;
 }
 
 // ------------------------------------------------------------
@@ -228,22 +228,22 @@ let groupCards = [[], [], [], []]; // প্রতিটি গ্রুপে �
 let selected = null;       // বর্তমানে নির্বাচিত তাস (হাত থেকে)
 
 socket.on('your_hand', ({ hand }) => {
-  handCards = hand.slice();
-  groupCards = [[], [], [], []];
+  groupCards = clientAutoArrange(hand.slice());
+  handCards = [];
   selected = null;
   document.getElementById('btnUp').disabled = true;
   document.getElementById('waitingList').textContent = '';
-  document.getElementById('gameHint').textContent = 'প্রথমে নিচের হাত থেকে একটি তাসে ক্লিক করুন, তারপর যে ট্রেতে রাখতে চান সেখানে ক্লিক করুন।';
+  document.getElementById('gameHint').textContent = 'তাস সাজান, তারপর "প্রস্তুত" চাপুন';
   renderArranger();
   if (lastRoomState) renderOppSeats(lastRoomState);
   showScreen('game');
 });
 
+const SHORT_TYPE_LABEL = { 6: 'ট্রয়', 5: 'কালার রান', 4: 'রান', 3: 'কালার', 2: 'পেয়ার', 1: 'হাই কার্ড' };
+
 function renderArranger() {
   const handArea = document.getElementById('handArea');
-  handArea.innerHTML = handCards
-    .map((c) => cardHTML(c))
-    .join('');
+  handArea.innerHTML = handCards.map((c) => cardHTML(c)).join('');
   handArea.querySelectorAll('.card').forEach((el) => {
     if (el.dataset.code === selected) el.classList.add('selected');
     el.addEventListener('click', () => {
@@ -253,25 +253,34 @@ function renderArranger() {
   });
 
   GROUP_SIZES.forEach((size, gi) => {
-    const box = document.getElementById('group' + gi);
-    box.innerHTML = groupCards[gi].map((c) => cardHTML(c, { mini: true })).join('');
-    box.querySelectorAll('.card').forEach((el) => {
+    const fan = document.getElementById('group' + gi);
+    fan.innerHTML = groupCards[gi].map((c) => cardHTML(c)).join('');
+    fan.querySelectorAll('.card').forEach((el) => {
       el.addEventListener('click', (ev) => {
         ev.stopPropagation();
-        // গ্রুপ থেকে হাতে ফেরত
         groupCards[gi] = groupCards[gi].filter((c) => c !== el.dataset.code);
         handCards.push(el.dataset.code);
         renderArranger();
       });
     });
     document.getElementById('cnt' + gi).textContent = `${groupCards[gi].length}/${size}`;
+
+    const labelEl = document.getElementById('label' + gi);
+    if (groupCards[gi].length === size) {
+      const ev = size === 4 ? bestOf4c(groupCards[gi]) : evaluate3c(groupCards[gi]);
+      labelEl.textContent = SHORT_TYPE_LABEL[ev.type];
+      labelEl.classList.remove('incomplete');
+    } else {
+      labelEl.textContent = groupCards[gi].length ? 'অসম্পূর্ণ' : (gi === 0 ? 'গ্রুপ ৪' : ['', 'গ্রুপ ক', 'গ্রুপ খ', 'গ্রুপ গ'][gi]);
+      labelEl.classList.add('incomplete');
+    }
   });
 
   const allDone = groupCards.every((g, i) => g.length === GROUP_SIZES[i]) && handCards.length === 0;
   document.getElementById('btnUp').disabled = !allDone;
 }
 
-document.querySelectorAll('.group-box').forEach((box) => {
+document.querySelectorAll('.group-col').forEach((box) => {
   box.addEventListener('click', () => {
     if (!selected) return;
     const gi = parseInt(box.dataset.g, 10);
@@ -335,6 +344,23 @@ function compareComboC(a, b) {
   for (let i = 0; i < a.tiebreak.length; i++) if (a.tiebreak[i] !== b.tiebreak[i]) return a.tiebreak[i] - b.tiebreak[i];
   return 0;
 }
+function bestOf4c(codes) {
+  const combos = [
+    [codes[0], codes[1], codes[2]], [codes[0], codes[1], codes[3]],
+    [codes[0], codes[2], codes[3]], [codes[1], codes[2], codes[3]],
+  ];
+  let best = null;
+  for (const c of combos) {
+    const ev = evaluate3c(c);
+    if (!best || compareComboC(ev, best) > 0) best = ev;
+  }
+  return best;
+}
+document.getElementById('btnSort').addEventListener('click', () => {
+  groupCards = groupCards.map((g) => g.slice().sort((a, b) => rankVal(b[0]) - rankVal(a[0])));
+  handCards = handCards.slice().sort((a, b) => rankVal(b[0]) - rankVal(a[0]));
+  renderArranger();
+});
 function clientAutoArrange(hand) {
   const cards = hand.map((c) => ({ code: c, val: rankVal(c[0]) })).sort((a, b) => b.val - a.val);
   const group4 = cards.slice(cards.length - 4).map((c) => c.code);

@@ -64,43 +64,51 @@
       <!-- প্রতিপক্ষদের আসন -->
       <div class="opp-row" id="oppSeats"></div>
 
-      <!-- টেবিলের মাঝখানে — গ্রুপ ট্রে -->
+      <!-- টেবিলের মাঝখানে -->
       <div class="felt">
-        <div class="felt-hint" id="gameHint">প্রথমে নিচের হাত থেকে একটি তাসে ক্লিক করুন, তারপর যে ট্রেতে রাখতে চান সেখানে ক্লিক করুন।</div>
-        <div class="groups" id="groupsArea">
-          <div class="group-box" data-g="0">
-            <div class="group-title">গ্রুপ ৪ <span class="count" id="cnt0">0/4</span></div>
-            <div class="group-cards" id="group0"></div>
-          </div>
-          <div class="group-box" data-g="1">
-            <div class="group-title">গ্রুপ ক <span class="count" id="cnt1">0/3</span></div>
-            <div class="group-cards" id="group1"></div>
-          </div>
-          <div class="group-box" data-g="2">
-            <div class="group-title">গ্রুপ খ <span class="count" id="cnt2">0/3</span></div>
-            <div class="group-cards" id="group2"></div>
-          </div>
-          <div class="group-box" data-g="3">
-            <div class="group-title">গ্রুপ গ <span class="count" id="cnt3">0/3</span></div>
-            <div class="group-cards" id="group3"></div>
-          </div>
+        <button id="btnUp" class="btn ready-btn" disabled>✅ প্রস্তুত (Ready)</button>
+        <div class="felt-hint" id="gameHint">তাস সাজান, তারপর "প্রস্তুত" চাপুন</div>
+        <div class="row gap table-actions">
+          <button id="btnReset" class="btn action-red">↩️ খালি করুন</button>
+          <button id="btnAuto" class="btn action-green">🔀 গ্রুপ</button>
+          <button id="btnSort" class="btn action-purple">🔢 মান সাজান</button>
         </div>
         <div id="waitingList" class="waiting-list"></div>
       </div>
     </div>
 
-    <!-- আমার আসন — নিজের হাত সবসময় নিচে -->
+    <!-- আমার ৪টি গ্রুপ — ফ্যান করে দেখানো, নিচে কম্বো-লেবেল -->
+    <div class="my-groups-strip" id="groupsArea">
+      <div class="group-col" data-g="0">
+        <div class="group-fan" id="group0"></div>
+        <div class="group-count" id="cnt0">০/৪</div>
+        <div class="group-label" id="label0">গ্রুপ ৪</div>
+      </div>
+      <div class="group-col" data-g="1">
+        <div class="group-fan" id="group1"></div>
+        <div class="group-count" id="cnt1">০/৩</div>
+        <div class="group-label" id="label1">গ্রুপ ক</div>
+      </div>
+      <div class="group-col" data-g="2">
+        <div class="group-fan" id="group2"></div>
+        <div class="group-count" id="cnt2">০/৩</div>
+        <div class="group-label" id="label2">গ্রুপ খ</div>
+      </div>
+      <div class="group-col" data-g="3">
+        <div class="group-fan" id="group3"></div>
+        <div class="group-count" id="cnt3">০/৩</div>
+        <div class="group-label" id="label3">গ্রুপ গ</div>
+      </div>
+    </div>
+
+    <!-- বাকি/অতিরিক্ত তাস (গ্রুপ থেকে সরালে এখানে আসবে) -->
     <div class="my-dock">
       <div class="my-dock-head">
-        <span class="my-dock-title">🧑 আপনার হাত</span>
+        <img id="myAvatarImg" class="my-avatar-img" src="/avatars/avatar1.png" alt="" />
+        <span class="my-dock-title">আপনার বাকি তাস</span>
         <span class="my-dock-score" id="myScoreChip"></span>
       </div>
       <div class="hand" id="handArea"></div>
-      <div class="row gap my-dock-actions">
-        <button id="btnAuto" class="btn secondary">🪄 অটো সাজান</button>
-        <button id="btnReset" class="btn ghost">↩️ রিসেট</button>
-        <button id="btnUp" class="btn primary" disabled>✅ প্রস্তুত (UP)</button>
-      </div>
     </div>
   </section>
 
