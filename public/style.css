@@ -166,6 +166,111 @@ input::placeholder{color:rgba(255,255,255,0.5);}
 .group-title{font-size:0.82rem; color:var(--muted); margin-bottom:6px; display:flex; justify-content:space-between;}
 .group-cards{display:flex; gap:4px; flex-wrap:wrap;}
 
+/* ============ টেবিল (গেম স্ক্রিন) ============ */
+#screen-game.active{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-width:720px;
+}
+.table-wrap{
+  background:
+    radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,0.06), transparent 60%),
+    linear-gradient(180deg, #0a4632, #073024 75%);
+  border:1px solid rgba(232,185,35,0.35);
+  border-radius:20px;
+  padding:14px 12px 10px;
+  box-shadow:inset 0 0 40px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.3);
+}
+.opp-row{
+  display:flex;
+  justify-content:space-around;
+  gap:8px;
+  margin-bottom:10px;
+}
+.opp-seat{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  background:rgba(0,0,0,0.22);
+  border-radius:12px;
+  padding:8px 4px;
+  min-width:0;
+}
+.opp-seat.empty{opacity:0.45;}
+.opp-avatar{
+  width:34px; height:34px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color:#1a1200;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700;
+  font-size:0.95rem;
+  flex-shrink:0;
+}
+.opp-seat.bot .opp-avatar{background:linear-gradient(135deg, #7a8a99, #4a5a68); color:#fff;}
+.opp-name{
+  font-size:0.72rem;
+  font-weight:600;
+  max-width:80px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:center;
+}
+.opp-status{font-size:0.68rem;}
+.opp-status.ready{color:#7ee7a8;}
+.opp-status.waiting{color:var(--muted);}
+.opp-fan{display:flex; margin-top:2px; height:30px;}
+.opp-fan .card.back{
+  width:20px; height:28px;
+  margin-left:-10px;
+  border:1.5px solid rgba(255,255,255,0.25);
+}
+.opp-fan .card.back:first-child{margin-left:0;}
+
+.card.back{
+  background:
+    repeating-linear-gradient(45deg, #1c3f6e 0 4px, #163258 4px 8px);
+  border:2px solid var(--gold-dark);
+  border-radius:6px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.4);
+}
+
+.felt{padding-top:2px;}
+.felt-hint{
+  font-size:0.78rem;
+  color:var(--muted);
+  text-align:center;
+  margin-bottom:10px;
+  line-height:1.5;
+}
+
+/* ============ আমার আসন (নিচে সবসময় স্থির) ============ */
+.my-dock{
+  background:rgba(0,0,0,0.32);
+  border:1px solid rgba(232,185,35,0.4);
+  border-radius:16px;
+  padding:12px;
+  position:sticky;
+  bottom:8px;
+}
+.my-dock-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+.my-dock-title{font-weight:700; color:var(--gold); font-size:0.95rem;}
+.my-dock-score{font-size:0.85rem; color:var(--muted);}
+.my-dock .hand{
+  margin-bottom:10px;
+  min-height:calc(var(--card-h) + 16px);
+}
+.my-dock-actions{margin-top:2px;}
+
 .scoreboard{
   display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
   margin-bottom:6px; width:100%; max-width:720px;

@@ -181,8 +181,42 @@ function renderScoreboard(state) {
     .filter(Boolean)
     .map((p) => `<div class="score-chip">${escapeHTML(p.name)}: <b>${p.score}</b></div>`)
     .join('');
-  document.getElementById('scoreboard').innerHTML = html;
   document.getElementById('scoreboard2').innerHTML = html;
+}
+
+// ---- টেবিলে প্রতিপক্ষদের আসন সাজিয়ে দেখানো (আমি সবসময় নিচে) ----
+function seatInitial(p) {
+  if (p.isBot) return '🤖';
+  return (p.name || '?').trim().slice(0, 1).toUpperCase();
+}
+
+function renderOppSeats(state) {
+  const area = document.getElementById('oppSeats');
+  if (!area) return;
+  const mySeat = state.players.findIndex((p) => p && p.id === myPlayerId);
+  const order = [1, 2, 3].map((off) => state.players[(mySeat + off + 4) % 4]);
+
+  area.innerHTML = order
+    .map((p) => {
+      if (!p) {
+        return `<div class="opp-seat empty"><div class="opp-avatar">?</div><div class="opp-name">খালি আসন</div></div>`;
+      }
+      const statusHTML = p.ready
+        ? `<span class="opp-status ready">✅ প্রস্তুত</span>`
+        : `<span class="opp-status waiting">⏳ সাজাচ্ছে...</span>`;
+      const fan = '<div class="card back"></div>'.repeat(4);
+      return `<div class="opp-seat ${p.isBot ? 'bot' : ''}">
+        <div class="opp-avatar">${seatInitial(p)}</div>
+        <div class="opp-name">${escapeHTML(p.name)}${!p.connected ? ' 📴' : ''}</div>
+        ${statusHTML}
+        <div class="opp-fan">${fan}</div>
+      </div>`;
+    })
+    .join('');
+
+  const me = state.players.find((p) => p && p.id === myPlayerId);
+  const chip = document.getElementById('myScoreChip');
+  if (chip && me) chip.textContent = `স্কোর: ${me.score}`;
 }
 
 // ------------------------------------------------------------
@@ -199,7 +233,9 @@ socket.on('your_hand', ({ hand }) => {
   selected = null;
   document.getElementById('btnUp').disabled = true;
   document.getElementById('waitingList').textContent = '';
+  document.getElementById('gameHint').textContent = 'প্রথমে নিচের হাত থেকে একটি তাসে ক্লিক করুন, তারপর যে ট্রেতে রাখতে চান সেখানে ক্লিক করুন।';
   renderArranger();
+  if (lastRoomState) renderOppSeats(lastRoomState);
   showScreen('game');
 });
 
@@ -334,8 +370,9 @@ socket.on('room_state', (state) => {
   }
   renderScoreboard(state);
 
-  // "UP" দেওয়ার পর অন্যদের অপেক্ষার তালিকা
+  // গেম স্ক্রিনে থাকলে টেবিলের প্রতিপক্ষ-আসন ও অপেক্ষার তালিকা আপডেট করি
   if (document.getElementById('screen-game').classList.contains('active')) {
+    renderOppSeats(state);
     const notReady = state.players.filter((p) => p && !p.ready).map((p) => p.name);
     document.getElementById('waitingList').textContent = notReady.length
       ? 'অপেক্ষা করা হচ্ছে: ' + notReady.join(', ')

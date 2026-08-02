@@ -57,42 +57,50 @@
     </div>
   </section>
 
-  <!-- ================= গেম স্ক্রিন (তাস সাজানো) ================= -->
+  <!-- ================= গেম স্ক্রিন — টেবিল ================= -->
   <section id="screen-game" class="screen">
-    <div class="scoreboard" id="scoreboard"></div>
+    <div class="table-wrap">
 
-    <div class="game-panel">
-      <h3>আপনার ১৩টি তাস — ৪টি গ্রুপে ভাগ করুন</h3>
-      <p class="muted small">প্রথমে একটি তাসে ক্লিক করুন, তারপর যে গ্রুপে বসাতে চান সেখানে ক্লিক করুন। গ্রুপ ৪-এ দুর্বল ৪টি তাস রাখা ভালো কৌশল।</p>
+      <!-- প্রতিপক্ষদের আসন -->
+      <div class="opp-row" id="oppSeats"></div>
 
-      <div class="hand" id="handArea"></div>
-
-      <div class="groups" id="groupsArea">
-        <div class="group-box" data-g="0">
-          <div class="group-title">গ্রুপ ৪ <span class="count" id="cnt0">0/4</span></div>
-          <div class="group-cards" id="group0"></div>
+      <!-- টেবিলের মাঝখানে — গ্রুপ ট্রে -->
+      <div class="felt">
+        <div class="felt-hint" id="gameHint">প্রথমে নিচের হাত থেকে একটি তাসে ক্লিক করুন, তারপর যে ট্রেতে রাখতে চান সেখানে ক্লিক করুন।</div>
+        <div class="groups" id="groupsArea">
+          <div class="group-box" data-g="0">
+            <div class="group-title">গ্রুপ ৪ <span class="count" id="cnt0">0/4</span></div>
+            <div class="group-cards" id="group0"></div>
+          </div>
+          <div class="group-box" data-g="1">
+            <div class="group-title">গ্রুপ ক <span class="count" id="cnt1">0/3</span></div>
+            <div class="group-cards" id="group1"></div>
+          </div>
+          <div class="group-box" data-g="2">
+            <div class="group-title">গ্রুপ খ <span class="count" id="cnt2">0/3</span></div>
+            <div class="group-cards" id="group2"></div>
+          </div>
+          <div class="group-box" data-g="3">
+            <div class="group-title">গ্রুপ গ <span class="count" id="cnt3">0/3</span></div>
+            <div class="group-cards" id="group3"></div>
+          </div>
         </div>
-        <div class="group-box" data-g="1">
-          <div class="group-title">গ্রুপ ক <span class="count" id="cnt1">0/3</span></div>
-          <div class="group-cards" id="group1"></div>
-        </div>
-        <div class="group-box" data-g="2">
-          <div class="group-title">গ্রুপ খ <span class="count" id="cnt2">0/3</span></div>
-          <div class="group-cards" id="group2"></div>
-        </div>
-        <div class="group-box" data-g="3">
-          <div class="group-title">গ্রুপ গ <span class="count" id="cnt3">0/3</span></div>
-          <div class="group-cards" id="group3"></div>
-        </div>
+        <div id="waitingList" class="waiting-list"></div>
       </div>
+    </div>
 
-      <div class="row gap" style="margin-top:14px">
+    <!-- আমার আসন — নিজের হাত সবসময় নিচে -->
+    <div class="my-dock">
+      <div class="my-dock-head">
+        <span class="my-dock-title">🧑 আপনার হাত</span>
+        <span class="my-dock-score" id="myScoreChip"></span>
+      </div>
+      <div class="hand" id="handArea"></div>
+      <div class="row gap my-dock-actions">
         <button id="btnAuto" class="btn secondary">🪄 অটো সাজান</button>
         <button id="btnReset" class="btn ghost">↩️ রিসেট</button>
         <button id="btnUp" class="btn primary" disabled>✅ প্রস্তুত (UP)</button>
       </div>
-      <p id="gameHint" class="muted small"></p>
-      <div id="waitingList" class="waiting-list"></div>
     </div>
   </section>
 
