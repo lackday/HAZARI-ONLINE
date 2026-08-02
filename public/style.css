@@ -18,7 +18,11 @@ body{
   font-family:'Hind Siliguri', sans-serif;
   background:
     radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,0.06), transparent),
-    linear-gradient(160deg, var(--felt-1), var(--felt-2) 60%, #073024);
+    linear-gradient(160deg, rgba(11,61,46,0.94), rgba(15,81,50,0.92) 60%, rgba(7,48,36,0.95)),
+    url('/theme/casino-bg.jpg');
+  background-size:auto, auto, cover;
+  background-position:center, center, center;
+  background-attachment:fixed, fixed, fixed;
   color:#eafff2;
   min-height:100vh;
   display:flex;
@@ -242,7 +246,11 @@ input::placeholder{color:rgba(255,255,255,0.5);}
 
 .card.back{
   background:
-    repeating-linear-gradient(45deg, #1c3f6e 0 4px, #163258 4px 8px);
+    url('/theme/card-back.svg'),
+    linear-gradient(135deg, #1c3f6e, #163258);
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat, no-repeat;
   border:2px solid var(--gold-dark);
   border-radius:6px;
   box-shadow:0 2px 4px rgba(0,0,0,0.4);
